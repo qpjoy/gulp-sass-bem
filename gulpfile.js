@@ -30,6 +30,9 @@ const options = minimist(process.argv.slice(2), {
   },
 });
 
+let oneChatPath = path.build;
+// const renamed = 'notification.wxss';
+
 const gulpSrc = gulp.src;
 
 gulp.src = function onError(...args) {
@@ -57,118 +60,112 @@ gulp.task('server', () => {
     ui: false
   });
   bs.watch(`${path.build}/**/*`).on('change', bs.reload);
-  gulp.watch(`./${path.src}/data/**/*`, ['data']);
-  gulp.watch(`./${path.src}/fonts/**/*`, ['fonts']);
-  gulp.watch(`./${path.src}/images/**/*`, ['images']);
-  gulp.watch(`./${path.src}/media/**/*`, ['media']);
-  gulp.watch(`./${path.src}/misc/**/*`, ['misc']);
-  gulp.watch(`./${path.src}/scripts/**/*.js`, ['scripts']);
-  gulp.watch(`./${path.src}/styles/**/*.scss`, ['styles']);
-  gulp.watch(`./${path.src}/vendors/*.js`, ['vendors']);
-  gulp.watch(`./${path.src}/views/**/*.pug`, ['views']);
+  gulp.watch(`*.*`, {cwd: path.src}, ['file']);
+  gulp.watch(`components/**/*`, {cwd: path.src}, ['components']);
+  gulp.watch(`image/**/*`, {cwd: path.src}, ['image']);
+  gulp.watch(`lib/**/*`, {cwd: path.src}, ['lib']);
+  gulp.watch(`utils/**/*`, {cwd: path.src}, ['utils']);
+  gulp.watch(`pages/**/*.js`, {cwd: path.src}, ['js']);
+  gulp.watch(`pages/**/*.json`, {cwd: path.src}, ['json']);
+  gulp.watch(`pages/**/*.html`, {cwd: path.src}, ['html']);
+  gulp.watch(`pages/**/*.scss`, {cwd: path.src}, ['sass']);
 });
 
 
 gulp.task('build', (callback) => sequence(
   ['clean'],
   ['assets'],
-  ['scripts'],
-  ['styles'],
-  ['vendors'],
-  ['views'],
+  ['components'],
+  ['image'],
+  ['lib'],
+  ['utils'],
   callback
 ));
 
 gulp.task('clean', () => del('./build'));
 
 gulp.task('assets', (callback) => sequence(
-  ['data'],
-  ['fonts'],
-  ['images'],
-  ['media'],
-  ['misc'],
+  ['file'],
+  ['js'],
+  ['json'],
+  ['html'],
+  ['sass'],
   callback
 ));
 
-gulp.task('data', () => gulp
-  .src(`${path.src}/data/**/*`)
-  .pipe(changed(`${path.build}/data`))
-  .pipe(gulp.dest(`${path.build}/data`))
+gulp.task('file', () => gulp
+  .src(`${path.src}/*.*`)
+  .pipe(changed(`${oneChatPath}/`))
+  .pipe(gulp.dest(`${oneChatPath}/`))
 );
 
-gulp.task('fonts', () => gulp
-  .src(`${path.src}/fonts/**/*`)
-  .pipe(changed(`${path.build}/fonts`))
-  .pipe(gulp.dest(`${path.build}/fonts`))
+gulp.task('components', () => gulp
+  .src(`${path.src}/components/**/*`)
+  .pipe(changed(`${oneChatPath}/components`))
+  .pipe(gulp.dest(`${oneChatPath}/components`))
 );
 
-gulp.task('images', () => gulp
+gulp.task('image', () => gulp
   // Select files
-    .src(`${path.src}/images/**/*`)
+    .src(`${path.src}/image/**/*`)
     // Check for changes
-    .pipe(changed(`${path.build}/images`))
+    .pipe(changed(`${oneChatPath}/image`))
     // Save files
-    .pipe(gulp.dest(`${path.build}/images`))
+    .pipe(gulp.dest(`${oneChatPath}/image`))
 );
 
-gulp.task('media', () => gulp
+gulp.task('lib', () => gulp
   // Select files
-    .src(`${path.src}/media/**/*`)
+    .src(`${path.src}/lib/**/*`)
     // Check for changes
-    .pipe(changed(`${path.build}/media`))
+    .pipe(changed(`${oneChatPath}/lib`))
     // Save files
-    .pipe(gulp.dest(`${path.build}/media`))
+    .pipe(gulp.dest(`${oneChatPath}/lib`))
 );
 
-
-gulp.task('misc', () => gulp
+gulp.task('utils', () => gulp
   // Select files
-    .src([
-      `${path.src}/misc/${options.env}/**/*`,
-      `${path.src}/misc/all/**/*`,
-    ], {
-      dot: true,
-    })
+    .src(`${path.src}/utils/**/*`)
     // Check for changes
-    .pipe(changed(path.build))
+    .pipe(changed(`${oneChatPath}/utils`))
     // Save files
-    .pipe(gulp.dest(path.build))
+    .pipe(gulp.dest(`${oneChatPath}/utils`))
 );
 
 
-gulp.task('scripts', ['scripts-lint'], () => gulp
+gulp.task('html', () => gulp
   // Select files
-    .src(`${path.src}/scripts/*.js`)
-    // Concatenate includes
-    .pipe(include())
-    // Transpile
-    .pipe(babel())
-    // Save unminified file
-    .pipe(gulp.dest(`${path.build}/scripts`))
-    // Optimize and minify
-    .pipe(uglify())
-    // Append suffix
-    .pipe(rename({
-      suffix: '.min',
+    .src([`${path.src}/pages/**/*.html`], [`${path.src}/pages/**/*.wxml`])
+    // Compile Sass
+    .pipe(rename(function (path) {
+      path.dirname = 'pages/' +path.dirname;
+      path.extname = ".wxml"
     }))
     // Save minified file
-    .pipe(gulp.dest(`${path.build}/scripts`))
+    .pipe(gulp.dest(`${oneChatPath}`))
 );
 
-
-gulp.task('scripts-lint', () => gulp
+gulp.task('js', () => gulp
   // Select files
-    .src(`${path.src}/scripts/**/*.js`)
-    // Check for errors
-    .pipe(eslint())
-    // Format errors
-    .pipe(eslint.format())
+    .src(`${path.src}/pages/**/*.js`)
+  .pipe(rename(function(path) {
+    path.dirname = 'pages/' +path.dirname;
+  }))
+    .pipe(gulp.dest(`${oneChatPath}`))
 );
 
-
-gulp.task('styles', () => gulp
+gulp.task('json', () => gulp
   // Select files
-    .src(`${path.src}/styles/*.scss`)
+    .src(`${path.src}/pages/**/*.json`)
+    .pipe(rename(function (path) {
+      path.dirname = 'pages/' + path.dirname;
+    }))
+    .pipe(gulp.dest(`${oneChatPath}`))
+);
+
+gulp.task('sass', () => gulp
+  // Select files
+    .src([`${path.src}/pages/**/*.scss`, `${path.src}/pages/**/*.wxss`])
     // Compile Sass
     .pipe(sass({
       outputStyle: 'expanded',
@@ -177,72 +174,11 @@ gulp.task('styles', () => gulp
     .pipe(postcss([
       autoprefixer,
     ]))
-    // Save unminified file
-    .pipe(gulp.dest(`${path.build}/styles`))
-    // Optimize and minify
-    .pipe(nano())
-    // Append suffix
-    .pipe(rename({
-      suffix: '.min',
+    .pipe(rename(function (path) {
+      path.dirname = 'pages/' + path.dirname;
+      path.extname = ".wxss";
     }))
     // Save minified file
-    .pipe(gulp.dest(`${path.build}/styles`))
+    .pipe(gulp.dest(`${oneChatPath}`))
 );
 
-
-gulp.task('vendors', () => gulp
-  // Select files
-    .src(`${path.src}/vendors/*.js`)
-    // Concatenate includes
-    .pipe(include({
-      includePaths: [
-        `${__dirname}/bower_components`,
-        `${__dirname}/node_modules`,
-      ],
-    }))
-    // Save files
-    .pipe(gulp.dest(`${path.build}/vendors`))
-);
-
-
-gulp.task('views', () => gulp
-  // Select files
-    .src(`${path.src}/views/site/**/*.pug`)
-    // Check which files have changed
-    .pipe(changed(path.build, {
-      extension: '.html',
-    }))
-    // Compile Pug
-    .pipe(pug({
-      basedir: `${__dirname}/${path.src}/views`,
-      pretty: (options.env === 'dev'),
-      data: {
-        env: options.env,
-      },
-    }))
-    // Save files
-    .pipe(gulp.dest(path.build))
-);
-
-
-
-
-
-// const options = minimist(process.argv.slice(2), {
-//   string: ['env'],
-//   default: 'dev'
-// })
-//
-// gulp.task('sass', function () {
-//   gulp.src('devwp/sass/**/*.scss')
-//     .pipe(sass().on('error', sass.logError))
-//     .pipe(gulp.dest('devwp'));
-// });
-//
-// gulp.task('sass:watch', function () {
-//   gulp.watch('devwp/sass/**/*.scss', ['sass']);
-// })
-//
-// gulp.task('default', function () {
-//
-// });

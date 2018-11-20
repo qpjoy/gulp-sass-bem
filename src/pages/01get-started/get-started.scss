@@ -1,0 +1,69 @@
+@import "../../lib/weui.scss";
+
+.topView {
+  height: 100%;
+}
+.start_btn {
+  background-color: #E6721D !important;
+  /* background-color: rgb(222, 91, 24) !important; */
+  margin-top: 80px;
+  border-radius: 3px;
+}
+.dark_color {
+  color: rgb(60, 60, 60);
+}
+
+.light_color {
+  color: rgb(75, 75, 75);
+  opacity: 1;
+  font-weight: 400;
+}
+
+view {
+  background-color: white;
+}
+.content {
+  background-color: white;
+  flex-direction:column;
+  height: 100%;
+  width: 100%;
+}
+
+.account {
+  text-align:center;
+  margin-top:15px;
+}
+image {
+    margin-top: 5%;
+    margin-left: 20%;
+    margin-right:20%;
+    width: 60%;
+}
+.welcome {
+    width: 100%;
+    font-size: 24px;
+    text-align: center;
+    /* font-weight: 400; */
+}
+.workplace {
+  text-decoration: underline;
+  color: #E6721D;
+}
+.details {
+  color: grey;
+}
+.bottom {
+  text-align: center;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+}
+.privacy {
+  font-size: 12px;
+  padding-left: 15px;
+  text-decoration: underline;
+  color: rgb(60, 60, 60);
+}
+.leftPrivay {
+  margin-left:-31px;
+}

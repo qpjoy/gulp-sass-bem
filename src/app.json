@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/01get-started/get-started",
+    "pages/03verify-success/verify-success",
+
+    "pages/02verify-workplace-account/verify-workplace-account",
+    "pages/qr-code/qr-code",
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "One Chat",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#ffffff",
+    "backgroundColorTop": "#ffffff",
+    "backgroundColorBottom": "#ffffff"
+  },
+  "tabBar": {
+    "color": "#ffffff",
+    "selectedColor": "#E6721D",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "Home",
+        "iconPath": "image/icon_live_nor.png",
+        "selectedIconPath": "image/icon_live_sel.png"
+      },
+      {
+        "pagePath": "pages/qr-code/qr-code",
+        "text": "Post",
+        "iconPath": "image/icon_msg_nor.png",
+        "selectedIconPath": "image/icon_msg_sel.png"
+      }
+    ],
+    "position": "bottom"
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "resizable": true
+}

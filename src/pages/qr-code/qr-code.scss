@@ -1,0 +1,13 @@
+/* pages/qr-code/qr-code.wxss */
+.qr_body {
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  /* background: #ccc; */
+  height: 100vh;
+}
+
+.qr_code {
+  margin-top: 50px;
+  display: inline-flex;
+}
